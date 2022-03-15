@@ -1,0 +1,12 @@
+- hosts: master01
+  become: yes
+  tasks:
+#    - name: initialize the cluster
+#      shell: kubeadm init --control-plane-endpoint "master01:6443" --upload-certs
+
+
+    - name: install calico
+      shell: curl https://docs.projectcalico.org/manifests/calico.yaml -O
+
+
+

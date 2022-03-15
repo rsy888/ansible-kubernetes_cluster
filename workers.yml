@@ -1,0 +1,28 @@
+- hosts: master01
+  become: yes
+  gather_facts: false
+  tasks:
+    - name: get join command
+      shell: kubeadm token create --print-join-command
+      register: join_command_raw
+  
+    - name: set join command
+      set_fact:
+        join_command: "{{ join_command_raw.stdout_lines[0] }}"
+  
+  
+- hosts: workers
+  become: yes
+  tasks:
+    - name: join cluster
+      shell:  "{{  hostvars['master01'].join_command }}"
+
+- hosts: master01
+  become: yes
+  gather_facts: false
+  tasks:
+    - name: get join command
+      shell: |
+         export KUBECONFIG=/etc/kubernetes/admin.conf
+         kubectl apply -f calico.yaml
+
