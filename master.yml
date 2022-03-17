@@ -1,9 +1,23 @@
-- hosts: master01
+- hosts: master
   become: yes
   tasks:
 #    - name: initialize the cluster
-#      shell: kubeadm init --control-plane-endpoint "master01:6443" --upload-certs
+#      shell: kubeadm init --control-plane-endpoint "master:6443" --upload-certs
 
+    - name: create .kube directory
+      become: yes
+      become_user: root
+      file:
+        path: $HOME/.kube
+        state: directory
+        mode: 0755
+  
+    - name: copy admin.conf to user's kube config
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /root/.kube/config
+        remote_src: yes
+        owner: root
 
     - name: install calico
       shell: curl https://docs.projectcalico.org/manifests/calico.yaml -O

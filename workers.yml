@@ -1,4 +1,4 @@
-- hosts: master01
+- hosts: master
   become: yes
   gather_facts: false
   tasks:
@@ -15,14 +15,12 @@
   become: yes
   tasks:
     - name: join cluster
-      shell:  "{{  hostvars['master01'].join_command }}"
+      shell:  "{{  hostvars['master'].join_command }}"
 
-- hosts: master01
+- hosts: master
   become: yes
   gather_facts: false
   tasks:
-    - name: get join command
-      shell: |
-         export KUBECONFIG=/etc/kubernetes/admin.conf
-         kubectl apply -f calico.yaml
+    - name: apply calico
+      shell: kubectl apply -f calico.yaml
 
