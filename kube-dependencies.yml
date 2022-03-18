@@ -154,7 +154,7 @@
        enabled: yes
        state: started
 
-- hosts: master01
+- hosts: master
   become: yes
   tasks:
    - name: install kubectl
