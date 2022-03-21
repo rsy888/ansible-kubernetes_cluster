@@ -8,6 +8,7 @@
         - nfs-utils
         - bash-completion
         - git
+        - wget
        state: present
 
    - name: modidfy Docker CE baseurl
@@ -154,7 +155,7 @@
        enabled: yes
        state: started
 
-- hosts: master
+- hosts: masters
   become: yes
   tasks:
    - name: install kubectl
