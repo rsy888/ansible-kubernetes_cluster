@@ -6,18 +6,17 @@
 
     - name: create .kube directory
       file:
-        path: /home/ec2-user/.kube
+        path: $HOME/.kube
         state: directory
         mode: 0775 
   
     - name: copy admin.conf to user's kube config
       copy:
         src: /etc/kubernetes/admin.conf
-        dest: /home/ec2-user/.kube/config
+        dest: $HOME/.kube/config
         remote_src: yes
 
     - name: install calico
       shell: curl https://docs.projectcalico.org/manifests/calico.yaml -O
-
 
 

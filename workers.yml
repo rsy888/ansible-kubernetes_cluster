@@ -1,6 +1,5 @@
 - hosts: master
   become: yes
-  become_user: ec2-user
   tasks:
     - name: get join command
       shell: kubeadm token create --print-join-command
@@ -13,7 +12,6 @@
   
 - hosts: workers
   become: yes
-  become_user: ec2-user
   tasks:
     - name: join cluster
       shell:  "{{  hostvars['master'].join_command }}"
