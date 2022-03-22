@@ -1,4 +1,19 @@
-- hosts: all
+- hosts: masters[0]
   become: yes
   tasks:
-   - name: 
+   - name: install kustomize
+     get_url:
+       url: https://github.com/kubernetes-sigs/kustomize/releases/download/v3.2.0/kustomize_3.2.0_linux_amd64
+       dest: /usr/local/bin/kustomize
+       mode: '0775'
+
+   - name: clone kubeflow manifests
+     git:
+       repo: https://github.com/kubeflow/manifests.git
+       dest: $HOME/manifests
+       clone: yes
+
+   - name: install kubeflow
+     shell: while ! kustomize build example | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+     args:
+       chdir: $HOME/manifests
