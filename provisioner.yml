@@ -3,6 +3,7 @@
   vars:
     nfs_server: "{{ ansible_eth0.ipv4.address }}"
     nfs_dir: /share
+    set_default: '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
   tasks:
    - name: clone nfs provisioner
      git:
@@ -36,6 +37,9 @@
      shell: kubectl create -f deploy/class.yaml
      args:
        chdir: $HOME/nfs-subdir-external-provisioner
+
+   - name: set storageclass as default
+     shell: "kubectl patch storageclass nfs-client -p '{{ set_default }}'"
 
    - name: apply pvc and test-pod
      shell: kubectl create -f deploy/test-claim.yaml -f deploy/test-pod.yaml
