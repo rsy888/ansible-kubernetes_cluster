@@ -1,0 +1,23 @@
+- hosts: masters[0]
+  become: yes
+  vars:
+    nfs_server: "{{ ansible_eth0.ipv4.address }}"
+    nfs_dir: /share
+  tasks:
+   - name: clone nfs provisioner
+     git:
+       repo: https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner.git
+       dest: $HOME/nfs-subdir-external-provisioner
+       clone: yes
+
+   - name: edit deployment's nfs server
+     replace:
+       path: $HOME/nfs-subdir-external-provisioner/deploy/deployment.yaml
+       regexp: '10.3.243.101'
+       replace: "{{ nfs_server }}"
+
+   - name: edit deployment's nfs directory
+     replace:
+       path: $HOME/nfs-subdir-external-provisioner/deploy/deployment.yaml
+       regexp: '/ifs/kubernetes'
+       replace: "{{ nfs_dir  }}"
