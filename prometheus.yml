@@ -1,0 +1,14 @@
+- hosts: masters[0]
+  become: yes
+  tasks:
+   - name: add prometheus-community repo
+     shell: |
+       helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+       helm repo update
+
+   - name: create prometheus namespace
+     shell: |
+       kubectl create ns prometheus
+
+   - name: install kube prometheus stack
+     shell: helm install prometheus prometheus-community/kube-prometheus-stack --namespace prometheus
