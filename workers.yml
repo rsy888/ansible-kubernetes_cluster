@@ -7,27 +7,44 @@
   
     - name: get certificate
       shell: kubeadm init phase upload-certs --upload-certs
-      register: join_certificate
+      register: join_certificate_raw
 
     - name: set join command
       set_fact:
         join_command: "{{ join_command_raw.stdout_lines[0] }}"
 
+    - name: sett certificate
+      set_fact:
+        join_certificate: "{{ join_certificate_raw.stdout_lines[-1] }}"
+
 - hosts: masters[1:]
   become: yes
+  vars:
   tasks:
     - name: join cluster(master node)
-      shell: "'{{  hostvars[masters[0]].join_command }}' --control-plane --certificate-key '{{ hostvars[masters[0]].join_certificate }}'"  
-  
+      shell: "{{ hostvars[groups['masters'][0]].join_command }} --control-plane --certificate-key {{ hostvars[groups['masters'][0]].join_certificate }}"  
+
 - hosts: workers
   become: yes
   tasks:
     - name: join cluster(worker node)
-      shell:  "{{  hostvars[masters[0]].join_command }}"
-
-- hosts: masters[0]
-  gather_facts: false
+      shell:  "{{  hostvars[groups['masters'][0]].join_command }}"
+  
+- hosts: masters
+  become: yes
   tasks:
+    - name: create .kube directory
+      file:
+        path: $HOME/.kube
+        state: directory
+        mode: 0775
+
+    - name: copy admin.conf to user's kube config
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: $HOME/.kube/config
+        remote_src: yes
+
     - name: install calico
       shell: curl https://docs.projectcalico.org/manifests/calico.yaml -O
 
