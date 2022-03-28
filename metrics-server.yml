@@ -1,0 +1,22 @@
+- hosts: masters[0]
+  become: yes
+  tasks:
+    - name: install metrics-server
+      get_url: 
+        url: https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+        dest: $HOME
+
+    - name: edit TLS
+      lineinfile:
+        path: $HOME/components.yaml
+        insertafter: "secure-port=4443"
+        line: '        - --kubelet-insecure-tls'
+
+    - name: edit TLS
+      lineinfile:
+        path: $HOME/components.yaml
+        insertafter: "kubernetes.io/os: linux"
+        line: '      hostNetwork: true'
+ 
+    - name: deploy metrics-server
+      shell: kubectl apply -f components.yaml
