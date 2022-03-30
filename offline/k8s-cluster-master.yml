@@ -1,0 +1,27 @@
+- hosts: localhost
+  become: yes
+  tasks:
+   - name: install kubectl
+     yum:
+       name: kubectl-1.21.1-0
+       state: present
+       allow_downgrade: true
+       disable_excludes: kubernetes
+
+   - name: create .kube directory
+     file:
+       path: $HOME/.kube
+       state: directory
+       mode: 0775
+
+   - name: copy admin.conf to user's kube config
+     copy:
+       src: /etc/kubernetes/admin.conf
+       dest: $HOME/.kube/config
+       remote_src: yes
+
+   - name: install calico
+     shell: curl https://docs.projectcalico.org/manifests/calico.yaml -O
+
+   - name: apply calico
+     shell: kubectl apply -f calico.yaml
