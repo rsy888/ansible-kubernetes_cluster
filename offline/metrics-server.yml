@@ -1,0 +1,9 @@
+- hosts: localhost
+  become: yes
+  vars:
+    packages_dir: $HOME/extra-packages/metrics-server
+  tasks:
+    - name: deploy metrics-server
+      shell: kubectl apply -f components.yaml
+      args:
+        chdir: "{{ packages_dir }}"
