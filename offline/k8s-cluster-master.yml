@@ -1,12 +1,14 @@
 - hosts: localhost
   become: yes
+  vars:
+    packages_dir: $HOME/k8s-packages
   tasks:
    - name: install kubectl
-     yum:
-       name: kubectl-1.21.1-0
-       state: present
-       allow_downgrade: true
-       disable_excludes: kubernetes
+     shell: |
+        echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+        install -o root -g root -m 0755 kubectl /usr/bin/kubectl
+     args:
+       chdir: "{{ packages_dir }}/k8s-packages"
 
    - name: create .kube directory
      file:
