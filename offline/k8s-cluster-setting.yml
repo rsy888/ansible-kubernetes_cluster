@@ -25,12 +25,14 @@
        dest: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
        remote_src: yes
 
-   - name: install kubeadm kubelet
+   - name: install kubeadm kubelet kubectl
      shell: |
         echo "$(cat kubeadm.sha256)  kubeadm" | sha256sum --check
         echo "$(cat kubelet.sha256)  kubelet" | sha256sum --check
         install -o root -g root -m 0755 kubeadm /usr/bin/kubeadm
         install -o root -g root -m 0755 kubelet /usr/bin/kubelet
+        echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+        install -o root -g root -m 0755 kubectl /usr/bin/kubectl
      args:
        chdir: "{{ packages_dir }}/k8s-packages"
 
