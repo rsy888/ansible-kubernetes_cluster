@@ -1,0 +1,15 @@
+- hosts: localhost
+  become: yes
+  vars:
+    packages_dir: $HOME/extra-packages
+  tasks:
+   - name: install kustomize
+     copy:
+       dest: /usr/bin/kustomize
+       content: "{{ packages_dir }}/kustomize_3.2.0_linux_amd64"
+       mode: '0775'
+
+   - name: install kubeflow
+     shell: while ! kustomize build example | kubectl apply -f -; do echo "Retrying to apply resources"; sleep 10; done
+     args:
+       chdir: "{{ packages_dir }}/manifests"
