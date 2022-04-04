@@ -9,7 +9,7 @@
        chdir: "{{ packages_dir }}/docker-packages"
 
    - name: load images
-     shell: "python3 docker-load.py"
+     shell: python3 docker-load.py
      args:
        chdir: $HOME/kubernetes-v1.21-images
 
