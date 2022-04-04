@@ -8,6 +8,11 @@
      args:
        chdir: "{{ packages_dir }}/docker-packages"
 
+   - name: load images
+     shell: "python3 docker-load.py"
+     args:
+       chdir: $HOME/kubernetes-v1.21-images
+
    - name: create kubelet.service.d directory
      file:
        path: /etc/systemd/system/kubelet.service.d/
