@@ -8,6 +8,22 @@
      args:
        chdir: "{{ packages_dir }}/docker-packages"
 
+   - name: add group docker
+     group:
+       name: "docker"
+
+   - name: add remote user to "docker" group
+     user:
+       name: "ec2-user"
+       group: "docker"
+       append: yes
+
+   - name: start Docker
+     service:
+       name: docker
+       enabled: yes
+       state: started
+
    - name: load images
      shell: python3 docker-load.py
      args:
@@ -40,22 +56,6 @@
         install -o root -g root -m 0755 kubectl /usr/bin/kubectl
      args:
        chdir: "{{ packages_dir }}/k8s-packages"
-
-   - name: add group docker
-     group:
-       name: "docker"
-
-   - name: add remote user to "docker" group
-     user:
-       name: "ec2-user"
-       group: "docker"
-       append: yes
-
-   - name: start Docker
-     service:
-       name: docker
-       enabled: yes
-       state: started
 
    - name: add daemon.json to get rid of kubelet issues
      copy:
