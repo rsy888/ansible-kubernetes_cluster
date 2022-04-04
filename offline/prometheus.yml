@@ -1,0 +1,14 @@
+- hosts: localhost
+  become: yes
+  vars:
+    packages_dir: $HOME/extra-packages/kube-prometheus
+  tasks:
+   - name: apply setup
+     shell: kubectl apply --server-side -f manifests/setup
+     args:
+       chdir: "{{ packages_dir }}"
+
+   - name: install prometheus
+     shell: kubectl apply -f manifests/
+     args:
+       chdir: "{{ packages_dir }}"
