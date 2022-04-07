@@ -1,0 +1,16 @@
+- hosts: localhost
+  become: yes
+  vars:
+    packages_dir: $HOME/extra-packages/kubernetes-ingress/deployments
+  tasks:
+   - name: install ingress-nginx
+     shell: |
+        kubectl apply -f common/ns-and-sa.yaml
+        kubectl apply -f rbac/rbac.yaml
+        kubectl apply -f common/default-server-secret.yaml
+        kubectl apply -f common/nginx-config.yaml
+        kubectl apply -f common/ingress-class.yaml
+        kubectl apply -f daemon-set/nginx-ingress.yaml
+        kubectl create -f service/nodeport.yaml
+     args:
+       chdir: "{{ packages_dir }}"
